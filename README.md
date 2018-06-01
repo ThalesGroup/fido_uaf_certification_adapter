@@ -12,6 +12,14 @@ Gematlo FIDO UAF Server up and running.
 Deploy adapter to Tomcat 8.x application server.
 URL of FIDO UAF Server is set by environment variable: UAF_SERVER
 
+### Known Issues / Limitations
+
+- No TLS support
+- No automated tests
+- Not a final product (Used only to pass FIDO certification test suite)
+-- No code review
+-- No penetration testing
+
 ## Running the tests
 
 https://fidoalliance.org/certification/conformance/
