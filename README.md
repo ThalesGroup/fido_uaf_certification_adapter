@@ -31,4 +31,4 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## License
 
-This project is licensed under the MIT License - see the [apache-license-2.0.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [License.md](apache-license-2.0.md) file for details
