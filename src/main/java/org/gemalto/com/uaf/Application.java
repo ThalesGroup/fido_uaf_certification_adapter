@@ -2,6 +2,7 @@ package org.gemalto.com.uaf;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.ApplicationPath;
 
 /**

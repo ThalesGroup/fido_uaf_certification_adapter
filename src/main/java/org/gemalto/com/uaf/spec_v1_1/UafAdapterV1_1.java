@@ -25,7 +25,7 @@ import java.io.IOException;
 public class UafAdapterV1_1 {
 
     private static final Gson gson = new Gson();
-    private final Logger logger = LogManager.getLogger(UafAdapterV1_1.class);
+    private static final Logger logger = LogManager.getLogger(UafAdapterV1_1.class);
 
     @Context
     HttpServletRequest request;
@@ -39,7 +39,10 @@ public class UafAdapterV1_1 {
             final String path = UafAdapterSettings.getTrustedFacetsPath();
             final String token = generateToken();
             logger.debug("Getting facet list from: " + path);
-            return ClientBuilder.newClient()
+            return ClientBuilder.newBuilder()
+                    .sslContext(AdapterUtils.createSSLContextForSelfSigned())
+                    .hostnameVerifier(AdapterUtils.createHostnameVerifierByPass())
+                    .build()
                     .target(path)
                     .request("application/fido.trusted-apps+json")
                     .header("Authorization", token)
@@ -53,7 +56,7 @@ public class UafAdapterV1_1 {
     @GET
     @Path("/alive")
     @Produces(MediaType.TEXT_PLAIN)
-    public String localAlive() throws ServletException, IOException {
+    public String localAlive() {
         logger.debug("/alive");
         return "OK";
     }
@@ -120,7 +123,10 @@ public class UafAdapterV1_1 {
     }
 
     private Invocation.Builder createInvokationBuilder(final String url) {
-        Client client = ClientBuilder.newClient();
+        Client client = ClientBuilder.newBuilder()
+                .sslContext(AdapterUtils.createSSLContextForSelfSigned())
+                .hostnameVerifier(AdapterUtils.createHostnameVerifierByPass())
+                .build();
         WebTarget webTarget = client.target(url);
         return webTarget.request("application/json")
                 .header("Authorization", generateToken());

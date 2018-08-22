@@ -1,5 +1,7 @@
 package org.gemalto.com.uaf;
 
+import com.gemalto.security.jwt.JwtAuthenticationParams;
+import com.gemalto.security.jwt.JwtSecret;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.jsonwebtoken.JwtBuilder;
@@ -24,7 +26,7 @@ public class JWTCreator {
     public static final String REQ_PARAM_TENANT_ID = "tenantKey";
     public static final String JWT_ATTR_TENANT_ID = "tenant";
     public static final String JWT_ATTR_PRINCIPAL_ID = "preferred_username";
-    public static final String HARDCODED_TENANT_ID = "dummyTenant";
+    public static final String HARDCODED_TENANT_ID = "colossus";
     public static final String HARDCODED_PRINCIPAL_ID = "dummyUser";
     public static final String JWT_HEADER = "Authorization";
     private static final String HARDCODED_Key_ID = "dummyKeyID";

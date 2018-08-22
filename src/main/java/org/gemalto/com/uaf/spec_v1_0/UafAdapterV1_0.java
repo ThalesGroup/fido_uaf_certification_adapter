@@ -241,7 +241,10 @@ public class UafAdapterV1_0 {
     }
 
     private Invocation.Builder createInvokationBuilder(final String url) {
-        Client client = ClientBuilder.newClient();
+        Client client = ClientBuilder.newBuilder()
+                .sslContext(AdapterUtils.createSSLContextForSelfSigned())
+                .hostnameVerifier(AdapterUtils.createHostnameVerifierByPass())
+                .build();
         WebTarget webTarget = client.target(url);
         return webTarget.request("application/json")
                 .header("Authorization", generateToken());

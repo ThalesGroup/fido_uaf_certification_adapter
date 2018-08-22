@@ -1,12 +1,14 @@
 package org.gemalto.com.uaf;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import javax.net.ssl.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +16,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -51,6 +58,10 @@ public class AdapterUtils {
 
         try {
 
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+            SSLContext context = createSSLContextForSelfSigned();
+            HttpsURLConnection.setDefaultSSLSocketFactory(
+                    context.getSocketFactory());
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
@@ -61,8 +72,6 @@ public class AdapterUtils {
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
                 logger.debug("Server returned with HTTP " + responseCode);
-
-                //   return "{\"statusCode\":1500,\"Description\":\"ERROR. Operation completed\",\"token\":null,\"location\":null,\"postData\":null,\"newUAFRequest\":null}";
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -79,9 +88,7 @@ public class AdapterUtils {
 
         } finally {
             conn.disconnect();
-
         }
-
     }
 
     /**
@@ -98,7 +105,7 @@ public class AdapterUtils {
      * @return the provided json with a escaped filed
      * @throws IOException
      */
-    static String convertFieldToString(String json, String fieldName) throws IOException {
+    String convertFieldToString(String json, String fieldName) throws IOException {
 
         JsonFactory factory = new JsonFactory();
 
@@ -152,4 +159,29 @@ public class AdapterUtils {
                 Charset.defaultCharset());
     }
 
+    public static SSLContext createSSLContextForSelfSigned() {
+        SSLContext ctx = null;
+        TrustManager[] trustAllCerts = new X509TrustManager[]{new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }};
+        try {
+            ctx = SSLContext.getInstance("SSL");
+            ctx.init(null, trustAllCerts, null);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            logger.error("Error loading ssl context {}", e);
+        }
+        return ctx;
+    }
+
+    public static HostnameVerifier createHostnameVerifierByPass() {
+        return (hostname, sslSession) -> true;
+    }
 }

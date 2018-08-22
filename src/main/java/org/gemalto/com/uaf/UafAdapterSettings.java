@@ -10,7 +10,7 @@ import java.util.Base64;
  */
 public class UafAdapterSettings {
 
-    private static String uafServerDomainAndContext = "http://localhost:8080/fidouaf";
+    private static String uafServerDomainAndContext = "http://localhost/fidouaf";
     private static String registrationRequestPath = "/v1/public/regRequest/";
     private static String registrationResponsePath = "/v1/public/regResponse";
     private static String authenticationRequestPath = "/v1/public/authRequest";
